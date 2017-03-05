@@ -6,7 +6,7 @@ int main (int argc, char *argv[]){
 	if(argc < 2)
 		return 1;
 
-	int filter = std::strtol(argv[3], NULL, 10);
+	int filter_opt = std::strtol(argv[3], NULL, 10);
 
 	std::string file_name = std::string(argv[1]);
 	std::string input_name = "./original/" + file_name;
@@ -16,12 +16,14 @@ int main (int argc, char *argv[]){
 
 	Mat img = imread(input_name, load_type); 
 	Mat img_out;
+	Mat mask;
 
 	std::string output_name = "./processed/";
 
-	switch(filter){
+	switch(filter_opt){
 		case 0:
-			img_out = img;
+			img_out = rgb2yiq(img);
+			output_name += "1_1_inter ";
 			break;
 		case 1:
 			img_out = rgb2yiq2rgb(img);
@@ -154,6 +156,24 @@ int main (int argc, char *argv[]){
 		case 33:
 			img_out = sobelFilter(img, 0) + sobelFilter(img, 1);
 			output_name += "1_8_sob_dia ";
+			break;
+		case 34:
+			mask = (Mat_<float> (3, 3) <<
+						 0, -1,  0,
+						-1,  5, -1,
+						 0, -1,  0);
+
+			img_out = filter(img, mask);
+			output_name += "1_9_a ";
+			break;
+		case 35:
+
+			mask = (Mat_<float> (3, 3) <<
+						 0,  0,  0,
+						 0,  1,  0,
+						 0,  0, -1);
+			img_out = filter(img, mask);
+			output_name += "1_9_b ";
 			break;
 		default:
 			break;
