@@ -18,12 +18,12 @@ int main (int argc, char *argv[]){
 	Mat img_out;
 	Mat mask;
 
-	std::string output_name = "./processed/";
+	std::string output_name = "./processed/" + file_name;
 
 	switch(filter_opt){
 		case 0:
-			img_out = rgb2yiq(img);
-			output_name += "1_1_inter ";
+			img_out = img;
+			output_name += "1_1_original ";
 			break;
 		case 1:
 			img_out = rgb2yiq2rgb(img);
@@ -110,7 +110,7 @@ int main (int argc, char *argv[]){
 			output_name += "1_6_thres_230 ";
 			break;
 		case 22:
-			img_out = thresholding(img, 200, 0, true);
+			img_out = thresholding(img, 0, 0, true);
 			output_name += "1_6_thres_mean ";
 			break;
 		case 23:
@@ -138,26 +138,14 @@ int main (int argc, char *argv[]){
 			output_name += "1_7_med_11 ";
 			break;
 		case 29:
-			img_out = laplacianFilter(img, 0);
-			output_name += "1_8_lap_1 ";
+			img_out = laplacianFilter(img);
+			output_name += "1_8_lap ";
 			break;
 		case 30:
-			img_out = laplacianFilter(img, 1);
-			output_name += "1_8_lap_2 ";
+			img_out = sobelFilter(img);
+			output_name += "1_8_sob ";
 			break;
 		case 31:
-			img_out = sobelFilter(img, 0);
-			output_name += "1_8_sob_vert ";
-			break;
-		case 32:
-			img_out = sobelFilter(img, 1);
-			output_name += "1_8_sob_hor ";
-			break;
-		case 33:
-			img_out = sobelFilter(img, 0) + sobelFilter(img, 1);
-			output_name += "1_8_sob_dia ";
-			break;
-		case 34:
 			mask = (Mat_<float> (3, 3) <<
 						 0, -1,  0,
 						-1,  5, -1,
@@ -166,7 +154,7 @@ int main (int argc, char *argv[]){
 			img_out = filter(img, mask);
 			output_name += "1_9_a ";
 			break;
-		case 35:
+		case 32:
 
 			mask = (Mat_<float> (3, 3) <<
 						 0,  0,  0,
@@ -175,19 +163,32 @@ int main (int argc, char *argv[]){
 			img_out = filter(img, mask);
 			output_name += "1_9_b ";
 			break;
+		case 33:
+			img_out = noiseSaltPepper(img, 0.05f);
+			output_name += "2_0_noise_pepper ";
+			break;
+		case 34:
+			img_out = noiseSaltPepper(img, 0.05f);
+			img_out = meanFilter(img_out, 3);
+			output_name += "2_0_mean ";
+			break;
+		case 35:
+			img_out = noiseSaltPepper(img, 0.05f);
+			img_out = medianFilter(img_out, 3);
+			output_name += "2_0_med ";
+			break;
 		default:
 			break;
 	}
 
-	output_name += (file_name + ".jpg");
+	output_name += ".jpg";
 	imwrite(output_name, img_out); 
 
-	
 	// IplImage output = img_out;
 	// namedWindow("Janela", CV_WINDOW_NORMAL);
 	// setWindowProperty("Janela", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
  // 	cvShowImage("Janela", static_cast<CvArr*>(&output));
-	// waitKey(0);
+//	waitKey(0);
 
 	return 0;
 }
